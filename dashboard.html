@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pulse - Analytics Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'] },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-out',
+        'slide-up': 'slideUp 0.4s ease-out',
+        'slide-right': 'slideRight 0.3s ease-out',
+        'scale-in': 'scaleIn 0.3s ease-out',
+        'pulse-slow': 'pulse 3s infinite',
+        'count': 'count 1s ease-out',
+      },
+      keyframes: {
+        fadeIn: { from: { opacity: '0' }, to: { opacity: '1' } },
+        slideUp: { from: { opacity: '0', transform: 'translateY(20px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
+        slideRight: { from: { opacity: '0', transform: 'translateX(-20px)' }, to: { opacity: '1', transform: 'translateX(0)' } },
+        scaleIn: { from: { opacity: '0', transform: 'scale(0.95)' }, to: { opacity: '1', transform: 'scale(1)' } },
+      }
+    }
+  }
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; }
+  .sidebar-link.active { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; }
+  .sidebar-link.active svg { color: white; }
+  .card-gradient-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+  .card-gradient-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+  .card-gradient-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+  .card-gradient-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+  .glass { backdrop-filter: blur(12px); background: rgba(255,255,255,0.85); }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #f1f5f9; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  .tooltip-container { position: relative; }
+  .tooltip-container .tooltip { visibility: hidden; opacity: 0; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(4px); background: #1e293b; color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; white-space: nowrap; transition: all 0.2s; z-index: 50; }
+  .tooltip-container:hover .tooltip { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(-6px); }
+  .sort-icon { transition: transform 0.2s; }
+  .sort-asc .sort-icon { transform: rotate(180deg); }
+  @keyframes countUp { from { opacity: 0.5; } to { opacity: 1; } }
+  .notification-dot::after { content: ''; position: absolute; top: 0; right: 0; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border: 2px solid white; }
+  .modal-overlay { transition: opacity 0.3s; }
+  .modal-content { transition: transform 0.3s, opacity 0.3s; }
+  .dropdown { transform-origin: top right; }
+</style>
+</head>
+
+<body class="bg-slate-50 min-h-screen">
+
+<!-- Sidebar -->
+<aside id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-200 z-40 flex flex-col transition-transform duration-300">
+  <div class="p-6 border-b border-slate-100">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl card-gradient-1 flex items-center justify-center">
+        <i data-lucide="activity" class="w-5 h-5 text-white"></i>
+      </div>
+      <span class="text-xl font-bold text-slate-800">Pulse</span>
+    </div>
+  </div>
+  <nav class="flex-1 p-4 space-y-1">
+    <a href="#" class="sidebar-link active flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200" data-page="dashboard">
+      <i data-lucide="layout-dashboard" class="w-[18px] h-[18px]"></i> Dashboard
+    </a>
+    <a href="#" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-all duration-200" data-page="analytics">
+      <i data-lucide="bar-chart-3" class="w-[18px] h-[18px]"></i> Analytics
+    </a>
+    <a href="#" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-all duration-200" data-page="customers">
+      <i data-lucide="users" class="w-[18px] h-[18px]"></i> Customers
+    </a>
+    <a href="#" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-all duration-200" data-page="orders">
+      <i data-lucide="shopping-bag" class="w-[18px] h-[18px]"></i> Orders
+    </a>
+    <a href="#" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-all duration-200" data-page="products">
+      <i data-lucide="package" class="w-[18px] h-[18px]"></i> Products
+    </a>
+    <div class="pt-4 pb-2"><div class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-4">Settings</div></div>
+    <a href="#" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-all duration-200" data-page="settings">
+      <i data-lucide="settings" class="w-[18px] h-[18px]"></i> Settings
+    </a>
+    <a href="#" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-all duration-200" data-page="help">
+      <i data-lucide="help-circle" class="w-[18px] h-[18px]"></i> Help Center
+    </a>
+  </nav>
+  <div class="p-4 border-t border-slate-100">
+    <div class="flex items-center gap-3 px-3 py-2">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-violet-400 to-indigo-500 flex items-center justify-center text-white text-sm font-semibold">A</div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-semibold text-slate-700 truncate">Aadhil Khan</div>
+        <div class="text-xs text-slate-400 truncate">admin@pulse.dev</div>
+      </div>
+      <button onclick="showToast('Profile settings coming soon!')" class="text-slate-400 hover:text-slate-600 transition-colors">
+        <i data-lucide="more-vertical" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="ml-64 min-h-screen">
+
+  <!-- Top Bar -->
+  <header class="sticky top-0 z-30 glass border-b border-slate-200/60">
+    <div class="flex items-center justify-between px-8 py-4">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800">Dashboard</h1>
+        <p class="text-sm text-slate-500 mt-0.5" id="greeting"></p>
+      </div>
+      <div class="flex items-center gap-3">
+        <!-- Search -->
+        <div class="relative">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input id="searchInput" type="text" placeholder="Search anything..." class="w-64 pl-10 pr-4 py-2 bg-slate-100 rounded-xl text-sm border border-transparent focus:border-indigo-300 focus:bg-white focus:ring-2 focus:ring-indigo-100 outline-none transition-all" oninput="handleSearch(this.value)">
+          <div id="searchResults" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden hidden z-50"></div>
+        </div>
+        <!-- Date Range -->
+        <button onclick="cycleDateRange()" id="dateRangeBtn" class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl text-sm text-slate-600 border border-slate-200 hover:border-indigo-300 hover:shadow-sm transition-all">
+          <i data-lucide="calendar" class="w-4 h-4"></i>
+          <span id="dateRangeText">Last 30 days</span>
+          <i data-lucide="chevron-down" class="w-3 h-3"></i>
+        </button>
+        <!-- Notifications -->
+        <button onclick="toggleNotifications()" class="relative p-2 rounded-xl hover:bg-slate-100 transition-colors notification-dot tooltip-container">
+          <span class="tooltip">3 new notifications</span>
+          <i data-lucide="bell" class="w-5 h-5 text-slate-600"></i>
+        </button>
+        <!-- Export -->
+        <button onclick="exportData()" class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 active:scale-95 transition-all shadow-sm shadow-indigo-200">
+          <i data-lucide="download" class="w-4 h-4"></i> Export
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="p-8">
+
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-4 gap-6 mb-8">
+      <div onclick="openCardDetail('revenue')" class="group cursor-pointer bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-indigo-200 transition-all duration-300 animate-slide-up" style="animation-delay: 0ms">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 rounded-2xl card-gradient-1 flex items-center justify-center shadow-lg shadow-indigo-200/50">
+            <i data-lucide="dollar-sign" class="w-6 h-6 text-white"></i>
+          </div>
+          <span class="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg text-xs font-semibold">
+            <i data-lucide="trending-up" class="w-3 h-3"></i> 12.5%
+          </span>
+        </div>
+        <div class="text-sm font-medium text-slate-500 mb-1">Total Revenue</div>
+        <div class="text-3xl font-bold text-slate-800 tracking-tight" id="revenue">$48,352</div>
+        <div class="mt-3 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full card-gradient-1 rounded-full transition-all duration-1000" style="width: 78%"></div>
+        </div>
+        <div class="text-xs text-slate-400 mt-2">78% of monthly goal</div>
+      </div>
+
+      <div onclick="openCardDetail('users')" class="group cursor-pointer bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-pink-200 transition-all duration-300 animate-slide-up" style="animation-delay: 100ms">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 rounded-2xl card-gradient-2 flex items-center justify-center shadow-lg shadow-pink-200/50">
+            <i data-lucide="users" class="w-6 h-6 text-white"></i>
+          </div>
+          <span class="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg text-xs font-semibold">
+            <i data-lucide="trending-up" class="w-3 h-3"></i> 8.1%
+          </span>
+        </div>
+        <div class="text-sm font-medium text-slate-500 mb-1">Active Users</div>
+        <div class="text-3xl font-bold text-slate-800 tracking-tight" id="users">2,841</div>
+        <div class="mt-3 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full card-gradient-2 rounded-full transition-all duration-1000" style="width: 64%"></div>
+        </div>
+        <div class="text-xs text-slate-400 mt-2">64% of target users</div>
+      </div>
+
+      <div onclick="openCardDetail('conversion')" class="group cursor-pointer bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-cyan-200 transition-all duration-300 animate-slide-up" style="animation-delay: 200ms">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 rounded-2xl card-gradient-3 flex items-center justify-center shadow-lg shadow-cyan-200/50">
+            <i data-lucide="mouse-pointer-click" class="w-6 h-6 text-white"></i>
+          </div>
+          <span class="flex items-center gap-1 text-red-500 bg-red-50 px-2.5 py-1 rounded-lg text-xs font-semibold">
+            <i data-lucide="trending-down" class="w-3 h-3"></i> 0.4%
+          </span>
+        </div>
+        <div class="text-sm font-medium text-slate-500 mb-1">Conversion Rate</div>
+        <div class="text-3xl font-bold text-slate-800 tracking-tight" id="conversion">3.24%</div>
+        <div class="mt-3 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full card-gradient-3 rounded-full transition-all duration-1000" style="width: 54%"></div>
+        </div>
+        <div class="text-xs text-slate-400 mt-2">54% of industry avg</div>
+      </div>
+
+      <div onclick="openCardDetail('session')" class="group cursor-pointer bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-emerald-200 transition-all duration-300 animate-slide-up" style="animation-delay: 300ms">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 rounded-2xl card-gradient-4 flex items-center justify-center shadow-lg shadow-emerald-200/50">
+            <i data-lucide="clock" class="w-6 h-6 text-white"></i>
+          </div>
+          <span class="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg text-xs font-semibold">
+            <i data-lucide="trending-up" class="w-3 h-3"></i> 1.2%
+          </span>
+        </div>
+        <div class="text-sm font-medium text-slate-500 mb-1">Avg. Session</div>
+        <div class="text-3xl font-bold text-slate-800 tracking-tight" id="session">4m 32s</div>
+        <div class="mt-3 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full card-gradient-4 rounded-full transition-all duration-1000" style="width: 72%"></div>
+        </div>
+        <div class="text-xs text-slate-400 mt-2">72% engagement rate</div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-3 gap-6 mb-8">
+      <!-- Revenue Chart -->
+      <div class="col-span-2 bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm animate-slide-up" style="animation-delay: 400ms">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-slate-800">Revenue Overview</h2>
+            <p class="text-sm text-slate-500">Monthly revenue & expenses</p>
+          </div>
+          <div class="flex bg-slate-100 rounded-xl p-1" id="chartTabs">
+            <button onclick="switchChartView('revenue')" class="chart-tab px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-indigo-600 shadow-sm transition-all" data-tab="revenue">Revenue</button>
+            <button onclick="switchChartView('profit')" class="chart-tab px-4 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700 transition-all" data-tab="profit">Profit</button>
+            <button onclick="switchChartView('orders')" class="chart-tab px-4 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700 transition-all" data-tab="orders">Orders</button>
+          </div>
+        </div>
+        <div style="height: 280px;">
+          <canvas id="mainChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Traffic Sources -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm animate-slide-up" style="animation-delay: 500ms">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-slate-800">Traffic Sources</h2>
+            <p class="text-sm text-slate-500">Where visitors come from</p>
+          </div>
+          <button onclick="showToast('Detailed traffic report generated!')" class="text-slate-400 hover:text-indigo-600 transition-colors">
+            <i data-lucide="external-link" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <div style="height: 190px;" class="mb-4">
+          <canvas id="doughnutChart"></canvas>
+        </div>
+        <div class="space-y-3" id="trafficLegend"></div>
+      </div>
+    </div>
+
+    <!-- Bottom Section -->
+    <div class="grid grid-cols-3 gap-6">
+      <!-- Transactions Table -->
+      <div class="col-span-2 bg-white rounded-2xl border border-slate-200/60 shadow-sm animate-slide-up overflow-hidden" style="animation-delay: 600ms">
+        <div class="flex items-center justify-between p-6 pb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-800">Recent Transactions</h2>
+            <p class="text-sm text-slate-500">Latest 8 transactions</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="flex bg-slate-100 rounded-xl p-1">
+              <button onclick="filterTable('all')" class="filter-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white text-indigo-600 shadow-sm transition-all" data-filter="all">All</button>
+              <button onclick="filterTable('completed')" class="filter-btn px-3 py-1 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700 transition-all" data-filter="completed">Completed</button>
+              <button onclick="filterTable('pending')" class="filter-btn px-3 py-1 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700 transition-all" data-filter="pending">Pending</button>
+              <button onclick="filterTable('failed')" class="filter-btn px-3 py-1 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700 transition-all" data-filter="failed">Failed</button>
+            </div>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-t border-b border-slate-100">
+                <th onclick="sortTable('name')" class="cursor-pointer hover:bg-slate-50 text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  <span class="flex items-center gap-1">Customer <i data-lucide="arrow-up-down" class="w-3 h-3 sort-icon"></i></span>
+                </th>
+                <th class="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Email</th>
+                <th onclick="sortTable('amount')" class="cursor-pointer hover:bg-slate-50 text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  <span class="flex items-center gap-1">Amount <i data-lucide="arrow-up-down" class="w-3 h-3 sort-icon"></i></span>
+                </th>
+                <th class="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                <th class="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
+                <th class="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider"></th>
+              </tr>
+            </thead>
+            <tbody id="tableBody" class="divide-y divide-slate-50"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Activity Feed -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm animate-slide-up" style="animation-delay: 700ms">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="text-lg font-bold text-slate-800">Activity</h2>
+          <button onclick="refreshActivity()" class="text-slate-400 hover:text-indigo-600 transition-colors hover:rotate-180 duration-500">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <div class="space-y-4" id="activityFeed"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Modal Overlay -->
+<div id="modal" class="modal-overlay fixed inset-0 bg-black/30 backdrop-blur-sm z-50 hidden flex items-center justify-center" onclick="closeModal(event)">
+  <div class="modal-content bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden" onclick="event.stopPropagation()">
+    <div class="p-6" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Notification Panel -->
+<div id="notifPanel" class="fixed top-0 right-0 h-full w-96 bg-white shadow-2xl border-l border-slate-200 z-50 transform translate-x-full transition-transform duration-300">
+  <div class="flex items-center justify-between p-6 border-b border-slate-100">
+    <h2 class="text-lg font-bold text-slate-800">Notifications</h2>
+    <button onclick="toggleNotifications()" class="p-1 rounded-lg hover:bg-slate-100 transition-colors">
+      <i data-lucide="x" class="w-5 h-5 text-slate-500"></i>
+    </button>
+  </div>
+  <div class="p-4 space-y-3" id="notifList"></div>
+</div>
+
+<!-- Toast Container -->
+<div id="toastContainer" class="fixed bottom-6 right-6 z-50 space-y-3"></div>
+
+<script>
+// ============ DATA ============
+const transactions = [
+  { name: 'Alice Johnson', email: 'alice@example.com', amount: 892, status: 'completed', date: 0, avatar: 'AJ', color: 'from-violet-400 to-purple-500' },
+  { name: 'Bob Smith', email: 'bob@company.co', amount: 435, status: 'pending', date: 1, avatar: 'BS', color: 'from-blue-400 to-cyan-500' },
+  { name: 'Carol Williams', email: 'carol@design.io', amount: 1247, status: 'completed', date: 1, avatar: 'CW', color: 'from-emerald-400 to-teal-500' },
+  { name: 'David Brown', email: 'david@startup.dev', amount: 189, status: 'failed', date: 2, avatar: 'DB', color: 'from-orange-400 to-red-500' },
+  { name: 'Eva Martinez', email: 'eva@agency.com', amount: 2100, status: 'completed', date: 3, avatar: 'EM', color: 'from-pink-400 to-rose-500' },
+  { name: 'Frank Lee', email: 'frank@tech.io', amount: 567, status: 'pending', date: 4, avatar: 'FL', color: 'from-indigo-400 to-blue-500' },
+  { name: 'Grace Chen', email: 'grace@lab.org', amount: 3420, status: 'completed', date: 5, avatar: 'GC', color: 'from-amber-400 to-orange-500' },
+  { name: 'Henry Wilson', email: 'henry@corp.net', amount: 750, status: 'completed', date: 6, avatar: 'HW', color: 'from-teal-400 to-emerald-500' },
+];
+
+const activities = [
+  { icon: 'user-plus', color: 'bg-indigo-100 text-indigo-600', text: 'New user <b>Sarah Kim</b> signed up', time: '2 min ago' },
+  { icon: 'credit-card', color: 'bg-emerald-100 text-emerald-600', text: 'Payment of <b>$1,247</b> received', time: '15 min ago' },
+  { icon: 'package', color: 'bg-amber-100 text-amber-600', text: 'Order <b>#4821</b> shipped', time: '1 hour ago' },
+  { icon: 'star', color: 'bg-pink-100 text-pink-600', text: 'New 5-star review from <b>James</b>', time: '2 hours ago' },
+  { icon: 'alert-circle', color: 'bg-red-100 text-red-600', text: 'Server CPU spike to <b>92%</b>', time: '3 hours ago' },
+  { icon: 'check-circle', color: 'bg-teal-100 text-teal-600', text: 'Deployment <b>v2.4.1</b> successful', time: '5 hours ago' },
+  { icon: 'mail', color: 'bg-blue-100 text-blue-600', text: 'Campaign email sent to <b>1.2k</b> users', time: '6 hours ago' },
+];
+
+const notifications = [
+  { icon: 'alert-circle', color: 'text-red-500 bg-red-50', title: 'Server Alert', desc: 'CPU usage exceeded 90% threshold', time: '5 min ago', unread: true },
+  { icon: 'user-plus', color: 'text-indigo-500 bg-indigo-50', title: 'New Team Member', desc: 'Sarah Kim joined the engineering team', time: '1 hour ago', unread: true },
+  { icon: 'check-circle', color: 'text-emerald-500 bg-emerald-50', title: 'Deployment Complete', desc: 'v2.4.1 deployed to production successfully', time: '3 hours ago', unread: true },
+  { icon: 'trending-up', color: 'text-amber-500 bg-amber-50', title: 'Revenue Milestone', desc: 'Monthly revenue exceeded $45,000 target', time: '1 day ago', unread: false },
+];
+
+const chartData = {
+  revenue: { data: [28, 32, 27, 35, 40, 38, 42, 44, 39, 48, 52, 48], data2: [18, 22, 19, 24, 28, 25, 30, 32, 27, 34, 38, 35], label1: 'Revenue', label2: 'Expenses', prefix: '$', suffix: 'k' },
+  profit: { data: [10, 10, 8, 11, 12, 13, 12, 12, 12, 14, 14, 13], data2: [8, 7, 6, 9, 10, 11, 10, 10, 10, 12, 12, 11], label1: 'Gross Profit', label2: 'Net Profit', prefix: '$', suffix: 'k' },
+  orders: { data: [120, 145, 132, 168, 185, 172, 198, 210, 192, 225, 248, 230], data2: [95, 118, 108, 140, 155, 142, 165, 178, 160, 190, 210, 195], label1: 'Total Orders', label2: 'Fulfilled', prefix: '', suffix: '' },
+};
+
+const trafficData = [
+  { label: 'Direct', value: 35, color: '#6366f1', bg: 'bg-indigo-100 text-indigo-600' },
+  { label: 'Organic Search', value: 30, color: '#10b981', bg: 'bg-emerald-100 text-emerald-600' },
+  { label: 'Referral', value: 20, color: '#8b5cf6', bg: 'bg-violet-100 text-violet-600' },
+  { label: 'Social Media', value: 15, color: '#f59e0b', bg: 'bg-amber-100 text-amber-600' },
+];
+
+// ============ GREETING ============
+const hour = new Date().getHours();
+const greetText = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+document.getElementById('greeting').textContent = `${greetText}! Here's what's happening today.`;
+
+// ============ CHARTS ============
+const months = ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
+let mainChart;
+
+function createMainChart(view = 'revenue') {
+  const d = chartData[view];
+  const ctx = document.getElementById('mainChart');
+  if (mainChart) mainChart.destroy();
+  mainChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [
+        { label: d.label1, data: d.data, backgroundColor: '#6366f1', borderRadius: 8, borderSkipped: false, barPercentage: 0.6, categoryPercentage: 0.7 },
+        { label: d.label2, data: d.data2, backgroundColor: '#e0e7ff', borderRadius: 8, borderSkipped: false, barPercentage: 0.6, categoryPercentage: 0.7 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { intersect: false, mode: 'index' },
+      plugins: {
+        legend: { display: true, position: 'top', align: 'end', labels: { usePointStyle: true, pointStyle: 'rectRounded', padding: 20, font: { size: 12, weight: '500' }, color: '#64748b' } },
+        tooltip: {
+          backgroundColor: '#1e293b', titleFont: { size: 13, weight: '600' }, bodyFont: { size: 12 }, padding: 12, cornerRadius: 10,
+          callbacks: { label: (c) => ` ${c.dataset.label}: ${d.prefix}${c.raw}${d.suffix}` }
+        }
+      },
+      scales: {
+        x: { ticks: { color: '#94a3b8', font: { size: 12 } }, grid: { display: false }, border: { display: false } },
+        y: { ticks: { color: '#94a3b8', font: { size: 12 }, callback: v => d.prefix + v + d.suffix }, grid: { color: '#f1f5f9', drawBorder: false }, border: { display: false } }
+      }
+    }
+  });
+}
+createMainChart();
+
+// Doughnut
+const doughnutChart = new Chart(document.getElementById('doughnutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: trafficData.map(t => t.label),
+    datasets: [{ data: trafficData.map(t => t.value), backgroundColor: trafficData.map(t => t.color), borderWidth: 0, hoverOffset: 8 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '72%',
+    plugins: {
+      legend: { display: false },
+      tooltip: { backgroundColor: '#1e293b', titleFont: { size: 13, weight: '600' }, bodyFont: { size: 12 }, padding: 12, cornerRadius: 10, callbacks: { label: (c) => ` ${c.label}: ${c.raw}%` } }
+    }
+  }
+});
+
+// Traffic legend
+const legendEl = document.getElementById('trafficLegend');
+trafficData.forEach(t => {
+  legendEl.innerHTML += `
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-3 h-3 rounded-full" style="background:${t.color}"></div>
+        <span class="text-sm text-slate-600">${t.label}</span>
+      </div>
+      <span class="text-sm font-semibold text-slate-800">${t.value}%</span>
+    </div>`;
+});
+
+// ============ TABLE ============
+let currentFilter = 'all';
+let sortField = null;
+let sortAsc = true;
+
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  let data = [...transactions];
+  if (currentFilter !== 'all') data = data.filter(t => t.status === currentFilter);
+  if (sortField === 'name') data.sort((a,b) => sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+  if (sortField === 'amount') data.sort((a,b) => sortAsc ? a.amount - b.amount : b.amount - a.amount);
+
+  tbody.innerHTML = data.map((t, i) => {
+    const date = new Date(Date.now() - t.date * 86400000);
+    const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const statusStyles = { completed: 'bg-emerald-50 text-emerald-700 ring-emerald-600/10', pending: 'bg-amber-50 text-amber-700 ring-amber-600/10', failed: 'bg-red-50 text-red-700 ring-red-600/10' };
+    const statusIcons = { completed: 'check-circle', pending: 'clock', failed: 'x-circle' };
+    return `<tr class="hover:bg-slate-50/80 transition-colors cursor-pointer group" onclick="openTransactionDetail(${i})" style="animation: fadeIn 0.3s ease-out ${i * 50}ms both">
+      <td class="px-6 py-4">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br ${t.color} flex items-center justify-center text-white text-xs font-bold shadow-sm">${t.avatar}</div>
+          <span class="text-sm font-semibold text-slate-800">${t.name}</span>
+        </div>
+      </td>
+      <td class="px-6 py-4 text-sm text-slate-500">${t.email}</td>
+      <td class="px-6 py-4 text-sm font-semibold text-slate-800">$${t.amount.toLocaleString()}</td>
+      <td class="px-6 py-4">
+        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold ring-1 ring-inset ${statusStyles[t.status]}">
+          <i data-lucide="${statusIcons[t.status]}" class="w-3 h-3"></i> ${t.status.charAt(0).toUpperCase() + t.status.slice(1)}
+        </span>
+      </td>
+      <td class="px-6 py-4 text-sm text-slate-500">${dateStr}</td>
+      <td class="px-6 py-4">
+        <button class="opacity-0 group-hover:opacity-100 p-1 rounded-lg hover:bg-slate-100 transition-all">
+          <i data-lucide="more-horizontal" class="w-4 h-4 text-slate-400"></i>
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+  lucide.createIcons();
+}
+renderTable();
+
+// Activity Feed
+function renderActivity() {
+  const feed = document.getElementById('activityFeed');
+  feed.innerHTML = activities.map((a, i) => `
+    <div class="flex gap-3 animate-slide-right" style="animation-delay: ${i * 80}ms">
+      <div class="w-9 h-9 rounded-xl ${a.color} flex items-center justify-center flex-shrink-0">
+        <i data-lucide="${a.icon}" class="w-4 h-4"></i>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm text-slate-700 leading-relaxed">${a.text}</p>
+        <p class="text-xs text-slate-400 mt-1">${a.time}</p>
+      </div>
+    </div>
+  `).join('');
+  lucide.createIcons();
+}
+renderActivity();
+
+// Notifications
+function renderNotifications() {
+  const list = document.getElementById('notifList');
+  list.innerHTML = notifications.map(n => `
+    <div class="flex gap-3 p-3 rounded-xl ${n.unread ? 'bg-slate-50' : ''} hover:bg-slate-100 transition-colors cursor-pointer">
+      <div class="w-10 h-10 rounded-xl ${n.color} flex items-center justify-center flex-shrink-0">
+        <i data-lucide="${n.icon}" class="w-5 h-5"></i>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2">
+          <p class="text-sm font-semibold text-slate-800">${n.title}</p>
+          ${n.unread ? '<div class="w-2 h-2 rounded-full bg-indigo-500"></div>' : ''}
+        </div>
+        <p class="text-xs text-slate-500 mt-0.5">${n.desc}</p>
+        <p class="text-xs text-slate-400 mt-1">${n.time}</p>
+      </div>
+    </div>
+  `).join('');
+  lucide.createIcons();
+}
+renderNotifications();
+
+// ============ INTERACTIONS ============
+function switchChartView(view) {
+  document.querySelectorAll('.chart-tab').forEach(t => {
+    t.classList.toggle('bg-white', t.dataset.tab === view);
+    t.classList.toggle('text-indigo-600', t.dataset.tab === view);
+    t.classList.toggle('shadow-sm', t.dataset.tab === view);
+    t.classList.toggle('text-slate-500', t.dataset.tab !== view);
+  });
+  createMainChart(view);
+}
+
+function filterTable(filter) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('bg-white', b.dataset.filter === filter);
+    b.classList.toggle('text-indigo-600', b.dataset.filter === filter);
+    b.classList.toggle('shadow-sm', b.dataset.filter === filter);
+    b.classList.toggle('text-slate-500', b.dataset.filter !== filter);
+  });
+  renderTable();
+}
+
+function sortTable(field) {
+  if (sortField === field) sortAsc = !sortAsc;
+  else { sortField = field; sortAsc = true; }
+  renderTable();
+}
+
+let dateRangeIdx = 0;
+const dateRanges = ['Last 30 days', 'Last 7 days', 'Last 90 days', 'This year'];
+function cycleDateRange() {
+  dateRangeIdx = (dateRangeIdx + 1) % dateRanges.length;
+  document.getElementById('dateRangeText').textContent = dateRanges[dateRangeIdx];
+  showToast(`Showing data for: ${dateRanges[dateRangeIdx]}`);
+}
+
+function toggleNotifications() {
+  const panel = document.getElementById('notifPanel');
+  panel.classList.toggle('translate-x-full');
+}
+
+function openCardDetail(type) {
+  const details = {
+    revenue: { title: 'Revenue Breakdown', gradient: 'card-gradient-1', icon: 'dollar-sign', items: [['Product Sales', '$32,180'], ['Subscriptions', '$12,450'], ['Services', '$3,722']] },
+    users: { title: 'User Analytics', gradient: 'card-gradient-2', icon: 'users', items: [['New Users', '423'], ['Returning', '1,892'], ['Active Now', '526']] },
+    conversion: { title: 'Conversion Funnel', gradient: 'card-gradient-3', icon: 'mouse-pointer-click', items: [['Page Views', '45,821'], ['Add to Cart', '3,245'], ['Purchases', '1,484']] },
+    session: { title: 'Session Details', gradient: 'card-gradient-4', icon: 'clock', items: [['Avg. Pages/Session', '4.7'], ['Bounce Rate', '32%'], ['Session Duration', '4m 32s']] },
+  };
+  const d = details[type];
+  document.getElementById('modalBody').innerHTML = `
+    <div class="flex items-center gap-4 mb-6">
+      <div class="w-14 h-14 rounded-2xl ${d.gradient} flex items-center justify-center shadow-lg"><i data-lucide="${d.icon}" class="w-7 h-7 text-white"></i></div>
+      <div>
+        <h3 class="text-xl font-bold text-slate-800">${d.title}</h3>
+        <p class="text-sm text-slate-500">Detailed metrics breakdown</p>
+      </div>
+      <button onclick="closeModal()" class="ml-auto p-2 rounded-xl hover:bg-slate-100 transition-colors"><i data-lucide="x" class="w-5 h-5 text-slate-400"></i></button>
+    </div>
+    <div class="space-y-4">
+      ${d.items.map(([label, val]) => `
+        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+          <span class="text-sm font-medium text-slate-600">${label}</span>
+          <span class="text-lg font-bold text-slate-800">${val}</span>
+        </div>
+      `).join('')}
+    </div>
+    <button onclick="closeModal(); showToast('Report downloaded!')" class="w-full mt-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-sm shadow-indigo-200">
+      Download Report
+    </button>
+  `;
+  lucide.createIcons();
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+function openTransactionDetail(idx) {
+  const t = transactions[idx];
+  const date = new Date(Date.now() - t.date * 86400000);
+  const dateStr = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const statusStyles = { completed: 'bg-emerald-50 text-emerald-700', pending: 'bg-amber-50 text-amber-700', failed: 'bg-red-50 text-red-700' };
+  document.getElementById('modalBody').innerHTML = `
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br ${t.color} flex items-center justify-center text-white text-lg font-bold shadow-lg">${t.avatar}</div>
+        <div>
+          <h3 class="text-xl font-bold text-slate-800">${t.name}</h3>
+          <p class="text-sm text-slate-500">${t.email}</p>
+        </div>
+      </div>
+      <button onclick="closeModal()" class="p-2 rounded-xl hover:bg-slate-100 transition-colors"><i data-lucide="x" class="w-5 h-5 text-slate-400"></i></button>
+    </div>
+    <div class="space-y-3">
+      <div class="flex justify-between p-4 bg-slate-50 rounded-xl"><span class="text-sm text-slate-500">Amount</span><span class="text-lg font-bold text-slate-800">$${t.amount.toLocaleString()}</span></div>
+      <div class="flex justify-between items-center p-4 bg-slate-50 rounded-xl"><span class="text-sm text-slate-500">Status</span><span class="px-3 py-1 rounded-lg text-xs font-semibold ${statusStyles[t.status]}">${t.status.charAt(0).toUpperCase() + t.status.slice(1)}</span></div>
+      <div class="flex justify-between p-4 bg-slate-50 rounded-xl"><span class="text-sm text-slate-500">Date</span><span class="text-sm font-medium text-slate-800">${dateStr}</span></div>
+      <div class="flex justify-between p-4 bg-slate-50 rounded-xl"><span class="text-sm text-slate-500">Transaction ID</span><span class="text-sm font-mono text-slate-800">#TXN-${(1000 + idx * 137).toString()}</span></div>
+    </div>
+    <div class="flex gap-3 mt-6">
+      <button onclick="closeModal(); showToast('Receipt sent to ${t.email}')" class="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 active:scale-[0.98] transition-all">Send Receipt</button>
+      <button onclick="closeModal(); showToast('Refund initiated for $${t.amount.toLocaleString()}')" class="flex-1 py-3 bg-slate-100 text-slate-700 rounded-xl font-semibold hover:bg-slate-200 active:scale-[0.98] transition-all">Refund</button>
+    </div>
+  `;
+  lucide.createIcons();
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+function closeModal(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById('modal').classList.add('hidden');
+}
+
+function showToast(msg) {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'flex items-center gap-3 px-5 py-3 bg-white rounded-2xl shadow-xl border border-slate-200 animate-slide-up text-sm';
+  toast.innerHTML = `<div class="w-8 h-8 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0"><i data-lucide="check" class="w-4 h-4 text-indigo-600"></i></div><span class="text-slate-700 font-medium">${msg}</span>`;
+  container.appendChild(toast);
+  lucide.createIcons();
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(10px)'; toast.style.transition = 'all 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+function handleSearch(val) {
+  const results = document.getElementById('searchResults');
+  if (!val.trim()) { results.classList.add('hidden'); return; }
+  const matches = transactions.filter(t => t.name.toLowerCase().includes(val.toLowerCase()) || t.email.toLowerCase().includes(val.toLowerCase()));
+  const pages = ['Dashboard', 'Analytics', 'Customers', 'Orders', 'Products', 'Settings'].filter(p => p.toLowerCase().includes(val.toLowerCase()));
+  if (!matches.length && !pages.length) { results.classList.add('hidden'); return; }
+  results.classList.remove('hidden');
+  results.innerHTML = (pages.length ? `<div class="px-4 py-2 text-xs font-semibold text-slate-400 uppercase bg-slate-50">Pages</div>` + pages.map(p => `<div class="px-4 py-3 hover:bg-indigo-50 cursor-pointer text-sm text-slate-700 flex items-center gap-2 transition-colors" onclick="showToast('Navigating to ${p}'); document.getElementById('searchResults').classList.add('hidden'); document.getElementById('searchInput').value = '';"><i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i>${p}</div>`).join('') : '') +
+    (matches.length ? `<div class="px-4 py-2 text-xs font-semibold text-slate-400 uppercase bg-slate-50">Customers</div>` + matches.map((m, i) => `<div class="px-4 py-3 hover:bg-indigo-50 cursor-pointer text-sm text-slate-700 flex items-center gap-3 transition-colors" onclick="openTransactionDetail(${transactions.indexOf(m)}); document.getElementById('searchResults').classList.add('hidden'); document.getElementById('searchInput').value = '';"><div class="w-7 h-7 rounded-lg bg-gradient-to-br ${m.color} flex items-center justify-center text-white text-[10px] font-bold">${m.avatar}</div><div><div class="font-medium">${m.name}</div><div class="text-xs text-slate-400">${m.email}</div></div></div>`).join('') : '');
+  lucide.createIcons();
+}
+
+function exportData() {
+  showToast('Dashboard data exported as CSV!');
+}
+
+function refreshActivity() {
+  const feed = document.getElementById('activityFeed');
+  feed.style.opacity = '0.3';
+  setTimeout(() => { feed.style.opacity = '1'; feed.style.transition = 'opacity 0.3s'; showToast('Activity feed refreshed'); }, 500);
+}
+
+// Sidebar navigation
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.querySelectorAll('.sidebar-link').forEach(l => { l.classList.remove('active'); l.classList.add('text-slate-600', 'hover:bg-slate-100'); });
+    link.classList.add('active');
+    link.classList.remove('text-slate-600', 'hover:bg-slate-100');
+    showToast(`Navigated to ${link.dataset.page.charAt(0).toUpperCase() + link.dataset.page.slice(1)}`);
+  });
+});
+
+// Close search on outside click
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#searchInput') && !e.target.closest('#searchResults')) {
+    document.getElementById('searchResults').classList.add('hidden');
+  }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); document.getElementById('searchInput').focus(); }
+  if (e.key === 'Escape') { closeModal(); document.getElementById('notifPanel').classList.add('translate-x-full'); document.getElementById('searchResults').classList.add('hidden'); }
+});
+
+// Live metrics
+let rev = 48352, usr = 2841, conv = 3.24, sess = 272;
+function tick(current) { return Math.max(0, current + (Math.random() - 0.45) * current * 0.015); }
+setInterval(() => {
+  rev = tick(rev); document.getElementById('revenue').textContent = '$' + Math.round(rev).toLocaleString();
+  usr = tick(usr); document.getElementById('users').textContent = Math.round(usr).toLocaleString();
+  conv = tick(conv); document.getElementById('conversion').textContent = conv.toFixed(2) + '%';
+  sess = tick(sess); document.getElementById('session').textContent = Math.floor(sess/60) + 'm ' + Math.floor(sess%60) + 's';
+}, 3000);
+
+// Init icons
+lucide.createIcons();
+</script>
+</body>
+</html>
