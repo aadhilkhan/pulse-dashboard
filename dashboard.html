@@ -11,6 +11,13 @@
 tailwind.config = {
   theme: {
     extend: {
+      colors: {
+        vermillion: {
+          50: '#fef3f0', 100: '#fee4dd', 200: '#fcc5b8', 300: '#fa9e88',
+          400: '#f06e4f', 500: '#e34234', 600: '#cc3426', 700: '#a8281d',
+          800: '#8b231b', 900: '#741f19',
+        }
+      },
       fontFamily: { sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'] },
       animation: {
         'fade-in': 'fadeIn 0.4s ease-out both',
@@ -30,16 +37,16 @@ tailwind.config = {
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'Inter',sans-serif}
-  .sidebar-link.active{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff}
+  .sidebar-link.active{background:linear-gradient(135deg,#e34234,#f06e4f);color:#fff}
   .sidebar-link.active svg{color:#fff}
-  .grad-1{background:linear-gradient(135deg,#667eea,#764ba2)}
-  .grad-2{background:linear-gradient(135deg,#f093fb,#f5576c)}
+  .grad-1{background:linear-gradient(135deg,#e34234,#cc3426)}
+  .grad-2{background:linear-gradient(135deg,#fa9e88,#e34234)}
   .grad-3{background:linear-gradient(135deg,#4facfe,#00f2fe)}
   .grad-4{background:linear-gradient(135deg,#43e97b,#38f9d7)}
   .glass{backdrop-filter:blur(12px);background:rgba(255,255,255,0.88)}
   ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#f1f5f9}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}
   .notification-dot::after{content:'';position:absolute;top:0;right:0;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #fff}
-  .tab-active{background:#fff;color:#6366f1;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
+  .tab-active{background:#fff;color:#e34234;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
   @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 </style>
@@ -57,7 +64,7 @@ tailwind.config = {
   <nav class="flex-1 p-4 space-y-1" id="sidebarNav"></nav>
   <div class="p-4 border-t border-slate-100">
     <div class="flex items-center gap-3 px-3 py-2 cursor-pointer rounded-xl hover:bg-slate-50 transition-colors" onclick="navigate('settings')">
-      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-violet-400 to-indigo-500 flex items-center justify-center text-white text-sm font-semibold" id="userAvatar">A</div>
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-vermillion-400 to-vermillion-600 flex items-center justify-center text-white text-sm font-semibold" id="userAvatar">A</div>
       <div class="flex-1 min-w-0">
         <div class="text-sm font-semibold text-slate-700 truncate" id="userName">Aadhil Khan</div>
         <div class="text-xs text-slate-400 truncate" id="userEmail">admin@pulse.dev</div>
@@ -79,13 +86,13 @@ tailwind.config = {
       <div class="flex items-center gap-3">
         <div class="relative">
           <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-          <input id="globalSearch" type="text" placeholder="Search... (Cmd+K)" class="w-64 pl-10 pr-4 py-2 bg-slate-100 rounded-xl text-sm border border-transparent focus:border-indigo-300 focus:bg-white focus:ring-2 focus:ring-indigo-100 outline-none transition-all" oninput="handleGlobalSearch(this.value)">
+          <input id="globalSearch" type="text" placeholder="Search... (Cmd+K)" class="w-64 pl-10 pr-4 py-2 bg-slate-100 rounded-xl text-sm border border-transparent focus:border-vermillion-300 focus:bg-white focus:ring-2 focus:ring-vermillion-100 outline-none transition-all" oninput="handleGlobalSearch(this.value)">
           <div id="searchDropdown" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden hidden z-50 max-h-80 overflow-y-auto"></div>
         </div>
         <button onclick="toggleNotifications()" class="relative p-2 rounded-xl hover:bg-slate-100 transition-colors notification-dot" id="notifBellBtn">
           <i data-lucide="bell" class="w-5 h-5 text-slate-600"></i>
         </button>
-        <button onclick="doExport()" id="headerExportBtn" class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 active:scale-95 transition-all shadow-sm shadow-indigo-200">
+        <button onclick="doExport()" id="headerExportBtn" class="flex items-center gap-2 px-4 py-2 bg-vermillion-600 text-white rounded-xl text-sm font-medium hover:bg-vermillion-700 active:scale-95 transition-all shadow-sm shadow-vermillion-200">
           <i data-lucide="download" class="w-4 h-4"></i> Export
         </button>
       </div>
@@ -107,7 +114,7 @@ tailwind.config = {
   <div class="flex items-center justify-between p-6 border-b border-slate-100">
     <h2 class="text-lg font-bold text-slate-800">Notifications</h2>
     <div class="flex items-center gap-2">
-      <button onclick="markAllRead()" class="text-xs text-indigo-600 font-semibold hover:underline">Mark all read</button>
+      <button onclick="markAllRead()" class="text-xs text-vermillion-600 font-semibold hover:underline">Mark all read</button>
       <button onclick="toggleNotifications()" class="p-1 rounded-lg hover:bg-slate-100 transition-colors"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
     </div>
   </div>
@@ -131,17 +138,17 @@ const state = {
   },
   notifications: [
     { id:1, icon:'alert-circle', color:'text-red-500 bg-red-50', title:'Server Alert', desc:'CPU usage exceeded 90% threshold', time: Date.now()-300000, read:false },
-    { id:2, icon:'user-plus', color:'text-indigo-500 bg-indigo-50', title:'New Team Member', desc:'Sarah Kim joined the engineering team', time: Date.now()-3600000, read:false },
+    { id:2, icon:'user-plus', color:'text-vermillion-500 bg-vermillion-50', title:'New Team Member', desc:'Sarah Kim joined the engineering team', time: Date.now()-3600000, read:false },
     { id:3, icon:'check-circle', color:'text-emerald-500 bg-emerald-50', title:'Deployment Complete', desc:'v2.4.1 deployed to production successfully', time: Date.now()-10800000, read:false },
     { id:4, icon:'trending-up', color:'text-amber-500 bg-amber-50', title:'Revenue Milestone', desc:'Monthly revenue exceeded $45,000 target', time: Date.now()-86400000, read:true },
   ],
   customers: [
-    { id:1, name:'Alice Johnson', email:'alice@example.com', spent:8920, orders:12, status:'active', joined:'2025-03-15', avatar:'AJ', color:'from-violet-400 to-purple-500', phone:'+1 555-0101', city:'San Francisco' },
+    { id:1, name:'Alice Johnson', email:'alice@example.com', spent:8920, orders:12, status:'active', joined:'2025-03-15', avatar:'AJ', color:'from-vermillion-400 to-rose-500', phone:'+1 555-0101', city:'San Francisco' },
     { id:2, name:'Bob Smith', email:'bob@company.co', spent:4350, orders:6, status:'active', joined:'2025-05-22', avatar:'BS', color:'from-blue-400 to-cyan-500', phone:'+1 555-0102', city:'New York' },
     { id:3, name:'Carol Williams', email:'carol@design.io', spent:12470, orders:18, status:'active', joined:'2024-11-08', avatar:'CW', color:'from-emerald-400 to-teal-500', phone:'+1 555-0103', city:'Austin' },
     { id:4, name:'David Brown', email:'david@startup.dev', spent:1890, orders:3, status:'inactive', joined:'2025-08-01', avatar:'DB', color:'from-orange-400 to-red-500', phone:'+1 555-0104', city:'Seattle' },
     { id:5, name:'Eva Martinez', email:'eva@agency.com', spent:21000, orders:24, status:'active', joined:'2024-06-14', avatar:'EM', color:'from-pink-400 to-rose-500', phone:'+1 555-0105', city:'Miami' },
-    { id:6, name:'Frank Lee', email:'frank@tech.io', spent:5670, orders:8, status:'active', joined:'2025-01-20', avatar:'FL', color:'from-indigo-400 to-blue-500', phone:'+1 555-0106', city:'Chicago' },
+    { id:6, name:'Frank Lee', email:'frank@tech.io', spent:5670, orders:8, status:'active', joined:'2025-01-20', avatar:'FL', color:'from-vermillion-400 to-blue-500', phone:'+1 555-0106', city:'Chicago' },
     { id:7, name:'Grace Chen', email:'grace@lab.org', spent:34200, orders:31, status:'vip', joined:'2023-12-05', avatar:'GC', color:'from-amber-400 to-orange-500', phone:'+1 555-0107', city:'Boston' },
     { id:8, name:'Henry Wilson', email:'henry@corp.net', spent:7500, orders:10, status:'active', joined:'2025-04-11', avatar:'HW', color:'from-teal-400 to-emerald-500', phone:'+1 555-0108', city:'Denver' },
   ],
@@ -272,14 +279,14 @@ function renderNotifPanel(){
   const list=document.getElementById('notifList');
   if(!state.notifications.length){list.innerHTML='<p class="text-sm text-slate-400 text-center py-8">No notifications</p>';return;}
   list.innerHTML=state.notifications.map(n=>`
-    <div class="flex gap-3 p-3 rounded-xl ${n.read?'':'bg-indigo-50/50'} hover:bg-slate-100 transition-colors group">
+    <div class="flex gap-3 p-3 rounded-xl ${n.read?'':'bg-vermillion-50/50'} hover:bg-slate-100 transition-colors group">
       <div class="w-10 h-10 rounded-xl ${n.color} flex items-center justify-center flex-shrink-0"><i data-lucide="${n.icon}" class="w-5 h-5"></i></div>
       <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2"><p class="text-sm font-semibold text-slate-800">${n.title}</p>${n.read?'':'<div class="w-2 h-2 rounded-full bg-indigo-500"></div>'}</div>
+        <div class="flex items-center gap-2"><p class="text-sm font-semibold text-slate-800">${n.title}</p>${n.read?'':'<div class="w-2 h-2 rounded-full bg-vermillion-500"></div>'}</div>
         <p class="text-xs text-slate-500 mt-0.5">${n.desc}</p>
         <div class="flex items-center gap-3 mt-1.5">
           <span class="text-xs text-slate-400">${timeAgo(n.time)}</span>
-          ${n.read?'':`<button onclick="markNotifRead(${n.id})" class="text-xs text-indigo-600 font-medium hover:underline">Mark read</button>`}
+          ${n.read?'':`<button onclick="markNotifRead(${n.id})" class="text-xs text-vermillion-600 font-medium hover:underline">Mark read</button>`}
           <button onclick="deleteNotif(${n.id})" class="text-xs text-red-500 font-medium hover:underline opacity-0 group-hover:opacity-100 transition-opacity">Delete</button>
         </div>
       </div>
@@ -318,15 +325,15 @@ function handleGlobalSearch(val){
   let html='';
   if(pageMatches.length){
     html+='<div class="px-4 py-2 text-xs font-semibold text-slate-400 uppercase bg-slate-50">Pages</div>';
-    html+=pageMatches.map(p=>`<div class="px-4 py-3 hover:bg-indigo-50 cursor-pointer text-sm text-slate-700 flex items-center gap-2 transition-colors" onclick="navigate('${p.id}');document.getElementById('searchDropdown').classList.add('hidden');document.getElementById('globalSearch').value=''"><i data-lucide="${p.icon}" class="w-4 h-4 text-slate-400"></i>${p.label}</div>`).join('');
+    html+=pageMatches.map(p=>`<div class="px-4 py-3 hover:bg-vermillion-50 cursor-pointer text-sm text-slate-700 flex items-center gap-2 transition-colors" onclick="navigate('${p.id}');document.getElementById('searchDropdown').classList.add('hidden');document.getElementById('globalSearch').value=''"><i data-lucide="${p.icon}" class="w-4 h-4 text-slate-400"></i>${p.label}</div>`).join('');
   }
   if(custMatches.length){
     html+='<div class="px-4 py-2 text-xs font-semibold text-slate-400 uppercase bg-slate-50">Customers</div>';
-    html+=custMatches.map(c=>`<div class="px-4 py-3 hover:bg-indigo-50 cursor-pointer text-sm flex items-center gap-3 transition-colors" onclick="navigate('customers');setTimeout(()=>openCustomerDetail(${c.id}),100);document.getElementById('searchDropdown').classList.add('hidden');document.getElementById('globalSearch').value=''"><div class="w-7 h-7 rounded-lg bg-gradient-to-br ${c.color} flex items-center justify-center text-white text-[10px] font-bold">${c.avatar}</div><div><div class="font-medium text-slate-700">${c.name}</div><div class="text-xs text-slate-400">${c.email}</div></div></div>`).join('');
+    html+=custMatches.map(c=>`<div class="px-4 py-3 hover:bg-vermillion-50 cursor-pointer text-sm flex items-center gap-3 transition-colors" onclick="navigate('customers');setTimeout(()=>openCustomerDetail(${c.id}),100);document.getElementById('searchDropdown').classList.add('hidden');document.getElementById('globalSearch').value=''"><div class="w-7 h-7 rounded-lg bg-gradient-to-br ${c.color} flex items-center justify-center text-white text-[10px] font-bold">${c.avatar}</div><div><div class="font-medium text-slate-700">${c.name}</div><div class="text-xs text-slate-400">${c.email}</div></div></div>`).join('');
   }
   if(orderMatches.length){
     html+='<div class="px-4 py-2 text-xs font-semibold text-slate-400 uppercase bg-slate-50">Orders</div>';
-    html+=orderMatches.map(o=>`<div class="px-4 py-3 hover:bg-indigo-50 cursor-pointer text-sm text-slate-700 flex items-center gap-2 transition-colors" onclick="navigate('orders');setTimeout(()=>openOrderDetail('${o.id}'),100);document.getElementById('searchDropdown').classList.add('hidden');document.getElementById('globalSearch').value=''"><i data-lucide="shopping-bag" class="w-4 h-4 text-slate-400"></i>${o.id} - ${o.customer}</div>`).join('');
+    html+=orderMatches.map(o=>`<div class="px-4 py-3 hover:bg-vermillion-50 cursor-pointer text-sm text-slate-700 flex items-center gap-2 transition-colors" onclick="navigate('orders');setTimeout(()=>openOrderDetail('${o.id}'),100);document.getElementById('searchDropdown').classList.add('hidden');document.getElementById('globalSearch').value=''"><i data-lucide="shopping-bag" class="w-4 h-4 text-slate-400"></i>${o.id} - ${o.customer}</div>`).join('');
   }
   dd.innerHTML=html;
   lucide.createIcons();
@@ -346,7 +353,7 @@ function renderDashboard(){
   pc.innerHTML=`
     <!-- KPI Cards -->
     <div class="grid grid-cols-4 gap-6 mb-8">
-      ${kpiCard('revenue','Total Revenue','$48,352','+12.5%',true,'dollar-sign','grad-1','shadow-indigo-200/50','indigo',78,'78% of monthly goal')}
+      ${kpiCard('revenue','Total Revenue','$48,352','+12.5%',true,'dollar-sign','grad-1','shadow-vermillion-200/50','vermillion',78,'78% of monthly goal')}
       ${kpiCard('users','Active Users','2,841','+8.1%',true,'users','grad-2','shadow-pink-200/50','pink',64,'64% of target users')}
       ${kpiCard('conversion','Conversion Rate','3.24%','-0.4%',false,'mouse-pointer-click','grad-3','shadow-cyan-200/50','cyan',54,'54% of industry avg')}
       ${kpiCard('session','Avg. Session','4m 32s','+1.2%',true,'clock','grad-4','shadow-emerald-200/50','emerald',72,'72% engagement rate')}
@@ -383,7 +390,7 @@ function renderDashboard(){
       <div class="col-span-2 bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden animate-slide-up" style="animation-delay:400ms">
         <div class="flex items-center justify-between p-6 pb-4">
           <div><h2 class="text-lg font-bold text-slate-800">Recent Transactions</h2><p class="text-sm text-slate-500">Latest orders</p></div>
-          <button onclick="navigate('orders')" class="text-sm text-indigo-600 font-semibold hover:underline">View all</button>
+          <button onclick="navigate('orders')" class="text-sm text-vermillion-600 font-semibold hover:underline">View all</button>
         </div>
         <table class="w-full"><thead><tr class="border-t border-b border-slate-100">
           <th class="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Order</th>
@@ -434,7 +441,7 @@ function openKpiDetail(type){
       <button onclick="closeModal()" class="ml-auto p-2 rounded-xl hover:bg-slate-100"><i data-lucide="x" class="w-5 h-5 text-slate-400"></i></button>
     </div>
     <div class="space-y-3">${d.items.map(([l,v])=>`<div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl"><span class="text-sm font-medium text-slate-600">${l}</span><span class="text-lg font-bold text-slate-800">${v}</span></div>`).join('')}</div>
-    <button onclick="closeModal();navigate('analytics')" class="w-full mt-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 active:scale-[0.98] transition-all">View Full Analytics</button>
+    <button onclick="closeModal();navigate('analytics')" class="w-full mt-6 py-3 bg-vermillion-600 text-white rounded-xl font-semibold hover:bg-vermillion-700 active:scale-[0.98] transition-all">View Full Analytics</button>
   `);
 }
 
@@ -456,15 +463,15 @@ function buildDashChart(type){
   chartInstances.dashMain=new Chart(document.getElementById('dashMainChart'),{
     type:type,
     data:{labels:r.labels,datasets:[
-      {label:'Revenue',data:r.rev,backgroundColor:'#6366f1',borderColor:'#6366f1',borderRadius:type==='bar'?8:0,borderSkipped:false,barPercentage:0.6,categoryPercentage:0.7,fill:type==='line',tension:0.4,pointRadius:type==='line'?4:0,pointBackgroundColor:'#6366f1'},
-      {label:'Expenses',data:r.exp,backgroundColor:type==='bar'?'#e0e7ff':'rgba(99,102,241,0.1)',borderColor:'#a5b4fc',borderRadius:type==='bar'?8:0,borderSkipped:false,barPercentage:0.6,categoryPercentage:0.7,fill:type==='line',tension:0.4,pointRadius:type==='line'?4:0,pointBackgroundColor:'#a5b4fc',borderDash:type==='line'?[5,5]:[]}
+      {label:'Revenue',data:r.rev,backgroundColor:'#e34234',borderColor:'#e34234',borderRadius:type==='bar'?8:0,borderSkipped:false,barPercentage:0.6,categoryPercentage:0.7,fill:type==='line',tension:0.4,pointRadius:type==='line'?4:0,pointBackgroundColor:'#e34234'},
+      {label:'Expenses',data:r.exp,backgroundColor:type==='bar'?'#fee4dd':'rgba(227,66,52,0.1)',borderColor:'#fa9e88',borderRadius:type==='bar'?8:0,borderSkipped:false,barPercentage:0.6,categoryPercentage:0.7,fill:type==='line',tension:0.4,pointRadius:type==='line'?4:0,pointBackgroundColor:'#fa9e88',borderDash:type==='line'?[5,5]:[]}
     ]},
     options:{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},plugins:{legend:{display:true,position:'top',align:'end',labels:{usePointStyle:true,pointStyle:'rectRounded',padding:20,font:{size:12,weight:'500'},color:'#64748b'}},tooltip:{backgroundColor:'#1e293b',padding:12,cornerRadius:10}},scales:{x:{ticks:{color:'#94a3b8'},grid:{display:false},border:{display:false}},y:{ticks:{color:'#94a3b8',callback:v=>'$'+v+'k'},grid:{color:'#f1f5f9'},border:{display:false}}}}
   });
 }
 
 function buildDoughnut(){
-  const td=[{l:'Direct',v:35,c:'#6366f1'},{l:'Organic',v:30,c:'#10b981'},{l:'Referral',v:20,c:'#8b5cf6'},{l:'Social',v:15,c:'#f59e0b'}];
+  const td=[{l:'Direct',v:35,c:'#e34234'},{l:'Organic',v:30,c:'#10b981'},{l:'Referral',v:20,c:'#f06e4f'},{l:'Social',v:15,c:'#f59e0b'}];
   chartInstances.dashDoughnut=new Chart(document.getElementById('dashDoughnut'),{
     type:'doughnut',data:{labels:td.map(t=>t.l),datasets:[{data:td.map(t=>t.v),backgroundColor:td.map(t=>t.c),borderWidth:0,hoverOffset:8}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e293b',padding:12,cornerRadius:10,callbacks:{label:c=>` ${c.label}: ${c.raw}%`}}}}
@@ -475,7 +482,7 @@ function buildDoughnut(){
 function buildDashOrdersTable(){
   document.getElementById('dashOrdersTable').innerHTML=state.orders.slice(0,5).map(o=>`
     <tr class="hover:bg-slate-50 cursor-pointer transition-colors" onclick="navigate('orders');setTimeout(()=>openOrderDetail('${o.id}'),100)">
-      <td class="px-6 py-4 text-sm font-semibold text-indigo-600">${o.id}</td>
+      <td class="px-6 py-4 text-sm font-semibold text-vermillion-600">${o.id}</td>
       <td class="px-6 py-4 text-sm text-slate-700">${o.customer}</td>
       <td class="px-6 py-4 text-sm font-semibold text-slate-800">$${o.total.toLocaleString()}</td>
       <td class="px-6 py-4">${statusBadge(o.status)}</td>
@@ -485,7 +492,7 @@ function buildDashOrdersTable(){
 
 function buildDashActivity(){
   const acts=[
-    {icon:'user-plus',color:'bg-indigo-100 text-indigo-600',text:'<b>Sarah Kim</b> signed up',time:'2 min ago'},
+    {icon:'user-plus',color:'bg-vermillion-100 text-vermillion-600',text:'<b>Sarah Kim</b> signed up',time:'2 min ago'},
     {icon:'credit-card',color:'bg-emerald-100 text-emerald-600',text:'Payment of <b>$1,247</b> received',time:'15 min ago'},
     {icon:'package',color:'bg-amber-100 text-amber-600',text:'Order <b>#4821</b> shipped',time:'1 hour ago'},
     {icon:'star',color:'bg-pink-100 text-pink-600',text:'5-star review from <b>James</b>',time:'2 hours ago'},
@@ -557,14 +564,14 @@ function renderAnalytics(){
              ['/blog',8930,7120,'41%','1m 38s'],
              ['/docs',6840,5230,'18%','5m 22s'],
              ['/about',4210,3580,'44%','1m 15s'],
-          ].map(([p,v,u,b,t])=>`<tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors"><td class="py-3 px-4 text-sm font-medium text-indigo-600">${p}</td><td class="py-3 px-4 text-sm text-slate-700">${v.toLocaleString()}</td><td class="py-3 px-4 text-sm text-slate-700">${u.toLocaleString()}</td><td class="py-3 px-4 text-sm text-slate-700">${b}</td><td class="py-3 px-4 text-sm text-slate-700">${t}</td></tr>`).join('')}
+          ].map(([p,v,u,b,t])=>`<tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors"><td class="py-3 px-4 text-sm font-medium text-vermillion-600">${p}</td><td class="py-3 px-4 text-sm text-slate-700">${v.toLocaleString()}</td><td class="py-3 px-4 text-sm text-slate-700">${u.toLocaleString()}</td><td class="py-3 px-4 text-sm text-slate-700">${b}</td><td class="py-3 px-4 text-sm text-slate-700">${t}</td></tr>`).join('')}
         </tbody></table>
       </div>
       <div class="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm animate-slide-up" style="animation-delay:500ms">
         <h2 class="text-lg font-bold text-slate-800 mb-1">Device Breakdown</h2><p class="text-sm text-slate-500 mb-4">By device type</p>
         <div style="height:200px"><canvas id="analyticsDevices"></canvas></div>
         <div class="space-y-3 mt-4">
-          ${[['Desktop','62%','#6366f1'],['Mobile','28%','#10b981'],['Tablet','10%','#f59e0b']].map(([l,v,c])=>`<div class="flex items-center justify-between"><div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full" style="background:${c}"></div><span class="text-sm text-slate-600">${l}</span></div><span class="text-sm font-semibold text-slate-800">${v}</span></div>`).join('')}
+          ${[['Desktop','62%','#e34234'],['Mobile','28%','#10b981'],['Tablet','10%','#f59e0b']].map(([l,v,c])=>`<div class="flex items-center justify-between"><div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full" style="background:${c}"></div><span class="text-sm text-slate-600">${l}</span></div><span class="text-sm font-semibold text-slate-800">${v}</span></div>`).join('')}
         </div>
       </div>
     </div>`;
@@ -572,11 +579,11 @@ function renderAnalytics(){
   // Visitors chart
   const days=Array.from({length:30},(_,i)=>i+1);
   const visitors=days.map(()=>Math.floor(800+Math.random()*900));
-  chartInstances.visitors=new Chart(document.getElementById('analyticsVisitors'),{type:'line',data:{labels:days.map(d=>'Day '+d),datasets:[{label:'Visitors',data:visitors,borderColor:'#6366f1',backgroundColor:'rgba(99,102,241,0.08)',fill:true,tension:0.4,pointRadius:0,pointHitRadius:10}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e293b',padding:12,cornerRadius:10}},scales:{x:{ticks:{color:'#94a3b8',maxTicksLimit:10},grid:{display:false},border:{display:false}},y:{ticks:{color:'#94a3b8'},grid:{color:'#f1f5f9'},border:{display:false}}}}});
+  chartInstances.visitors=new Chart(document.getElementById('analyticsVisitors'),{type:'line',data:{labels:days.map(d=>'Day '+d),datasets:[{label:'Visitors',data:visitors,borderColor:'#e34234',backgroundColor:'rgba(227,66,52,0.08)',fill:true,tension:0.4,pointRadius:0,pointHitRadius:10}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e293b',padding:12,cornerRadius:10}},scales:{x:{ticks:{color:'#94a3b8',maxTicksLimit:10},grid:{display:false},border:{display:false}},y:{ticks:{color:'#94a3b8'},grid:{color:'#f1f5f9'},border:{display:false}}}}});
   // Channels
-  chartInstances.channels=new Chart(document.getElementById('analyticsChannels'),{type:'bar',data:{labels:['Direct','Organic','Paid','Email','Social','Referral'],datasets:[{label:'Revenue ($k)',data:[18.2,14.5,8.9,4.2,2.1,1.5],backgroundColor:['#6366f1','#10b981','#f59e0b','#ec4899','#8b5cf6','#06b6d4'],borderRadius:8,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e293b',padding:12,cornerRadius:10,callbacks:{label:c=>' $'+c.raw+'k'}}},scales:{x:{ticks:{color:'#94a3b8',callback:v=>'$'+v+'k'},grid:{color:'#f1f5f9'},border:{display:false}},y:{ticks:{color:'#64748b',font:{weight:'500'}},grid:{display:false},border:{display:false}}}}});
+  chartInstances.channels=new Chart(document.getElementById('analyticsChannels'),{type:'bar',data:{labels:['Direct','Organic','Paid','Email','Social','Referral'],datasets:[{label:'Revenue ($k)',data:[18.2,14.5,8.9,4.2,2.1,1.5],backgroundColor:['#e34234','#10b981','#f59e0b','#ec4899','#f06e4f','#06b6d4'],borderRadius:8,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e293b',padding:12,cornerRadius:10,callbacks:{label:c=>' $'+c.raw+'k'}}},scales:{x:{ticks:{color:'#94a3b8',callback:v=>'$'+v+'k'},grid:{color:'#f1f5f9'},border:{display:false}},y:{ticks:{color:'#64748b',font:{weight:'500'}},grid:{display:false},border:{display:false}}}}});
   // Devices
-  chartInstances.devices=new Chart(document.getElementById('analyticsDevices'),{type:'doughnut',data:{labels:['Desktop','Mobile','Tablet'],datasets:[{data:[62,28,10],backgroundColor:['#6366f1','#10b981','#f59e0b'],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}});
+  chartInstances.devices=new Chart(document.getElementById('analyticsDevices'),{type:'doughnut',data:{labels:['Desktop','Mobile','Tablet'],datasets:[{data:[62,28,10],backgroundColor:['#e34234','#10b981','#f59e0b'],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}});
 }
 
 // =============================================
@@ -590,12 +597,12 @@ function renderCustomers(){
       <div class="flex items-center justify-between p-6">
         <div class="flex items-center gap-3">
           <div class="relative"><i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-          <input type="text" placeholder="Search customers..." class="pl-10 pr-4 py-2 bg-slate-50 rounded-xl text-sm border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none w-64" oninput="custSearch=this.value;renderCustTable()" value="${custSearch}"></div>
+          <input type="text" placeholder="Search customers..." class="pl-10 pr-4 py-2 bg-slate-50 rounded-xl text-sm border border-slate-200 focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none w-64" oninput="custSearch=this.value;renderCustTable()" value="${custSearch}"></div>
           <div class="flex bg-slate-100 rounded-xl p-1">
             ${['all','active','inactive','vip'].map(f=>`<button onclick="custFilter='${f}';renderCustTable()" class="cust-filter px-3 py-1 rounded-lg text-xs font-semibold ${custFilter===f?'tab-active':'text-slate-500 hover:text-slate-700'} transition-all" data-f="${f}">${f==='all'?'All':f.charAt(0).toUpperCase()+f.slice(1)}</button>`).join('')}
           </div>
         </div>
-        <button onclick="openAddCustomer()" class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 active:scale-95 transition-all"><i data-lucide="plus" class="w-4 h-4"></i> Add Customer</button>
+        <button onclick="openAddCustomer()" class="flex items-center gap-2 px-4 py-2 bg-vermillion-600 text-white rounded-xl text-sm font-medium hover:bg-vermillion-700 active:scale-95 transition-all"><i data-lucide="plus" class="w-4 h-4"></i> Add Customer</button>
       </div>
       <table class="w-full"><thead><tr class="border-t border-b border-slate-100">
         <th onclick="toggleCustSort('name')" class="cursor-pointer hover:bg-slate-50 text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider"><span class="flex items-center gap-1">Customer <i data-lucide="arrow-up-down" class="w-3 h-3"></i></span></th>
@@ -649,9 +656,9 @@ function openCustomerDetail(id){
       <div class="p-4 bg-slate-50 rounded-xl"><span class="text-xs text-slate-500">Orders</span><div class="text-sm font-semibold text-slate-800 mt-0.5">${c.orders}</div></div>
     </div>
     <div class="flex items-center gap-2 mb-3"><span class="text-xs text-slate-500">Status:</span>${statusBadge(c.status)}<span class="text-xs text-slate-500 ml-auto">Joined ${c.joined}</span></div>
-    ${orders.length?`<h4 class="text-sm font-bold text-slate-700 mt-4 mb-2">Recent Orders</h4><div class="space-y-2">${orders.map(o=>`<div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl"><div><span class="text-sm font-semibold text-indigo-600">${o.id}</span><span class="text-sm text-slate-500 ml-2">$${o.total}</span></div>${statusBadge(o.status)}</div>`).join('')}</div>`:''}
+    ${orders.length?`<h4 class="text-sm font-bold text-slate-700 mt-4 mb-2">Recent Orders</h4><div class="space-y-2">${orders.map(o=>`<div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl"><div><span class="text-sm font-semibold text-vermillion-600">${o.id}</span><span class="text-sm text-slate-500 ml-2">$${o.total}</span></div>${statusBadge(o.status)}</div>`).join('')}</div>`:''}
     <div class="flex gap-3 mt-6">
-      <button onclick="closeModal();navigate('orders')" class="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 active:scale-[0.98] transition-all">View Orders</button>
+      <button onclick="closeModal();navigate('orders')" class="flex-1 py-2.5 bg-vermillion-600 text-white rounded-xl text-sm font-semibold hover:bg-vermillion-700 active:scale-[0.98] transition-all">View Orders</button>
       <button onclick="closeModal()" class="flex-1 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-sm font-semibold hover:bg-slate-200 active:scale-[0.98] transition-all">Close</button>
     </div>`);
 }
@@ -659,18 +666,18 @@ function openAddCustomer(){
   openModal(`
     <div class="flex items-center justify-between mb-6"><h3 class="text-xl font-bold text-slate-800">Add Customer</h3><button onclick="closeModal()" class="p-2 rounded-xl hover:bg-slate-100"><i data-lucide="x" class="w-5 h-5 text-slate-400"></i></button></div>
     <form onsubmit="event.preventDefault();addCustomer(this)" class="space-y-4">
-      <div><label class="text-sm font-medium text-slate-700">Name</label><input name="name" required class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none"></div>
-      <div><label class="text-sm font-medium text-slate-700">Email</label><input name="email" type="email" required class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none"></div>
+      <div><label class="text-sm font-medium text-slate-700">Name</label><input name="name" required class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none"></div>
+      <div><label class="text-sm font-medium text-slate-700">Email</label><input name="email" type="email" required class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none"></div>
       <div class="grid grid-cols-2 gap-3">
-        <div><label class="text-sm font-medium text-slate-700">Phone</label><input name="phone" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none"></div>
-        <div><label class="text-sm font-medium text-slate-700">City</label><input name="city" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none"></div>
+        <div><label class="text-sm font-medium text-slate-700">Phone</label><input name="phone" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none"></div>
+        <div><label class="text-sm font-medium text-slate-700">City</label><input name="city" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none"></div>
       </div>
-      <button type="submit" class="w-full py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 active:scale-[0.98] transition-all">Add Customer</button>
+      <button type="submit" class="w-full py-3 bg-vermillion-600 text-white rounded-xl font-semibold hover:bg-vermillion-700 active:scale-[0.98] transition-all">Add Customer</button>
     </form>`);
 }
 function addCustomer(form){
   const fd=new FormData(form);const name=fd.get('name');
-  state.customers.push({id:Date.now(),name,email:fd.get('email'),spent:0,orders:0,status:'active',joined:new Date().toISOString().slice(0,10),avatar:name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),color:'from-indigo-400 to-violet-500',phone:fd.get('phone')||'N/A',city:fd.get('city')||'N/A'});
+  state.customers.push({id:Date.now(),name,email:fd.get('email'),spent:0,orders:0,status:'active',joined:new Date().toISOString().slice(0,10),avatar:name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),color:'from-vermillion-400 to-vermillion-600',phone:fd.get('phone')||'N/A',city:fd.get('city')||'N/A'});
   closeModal();renderCustomers();
 }
 function confirmDeleteCustomer(id){
@@ -689,8 +696,8 @@ function renderOrders(){
   pc.innerHTML=`
     <div class="grid grid-cols-5 gap-4 mb-6">
       ${[['all','All Orders',state.orders.length,'layers'],['pending','Pending',counts.pending||0,'clock'],['processing','Processing',counts.processing||0,'loader'],['shipped','Shipped',counts.shipped||0,'truck'],['delivered','Delivered',counts.delivered||0,'check-circle']].map(([f,l,c,ic])=>`
-        <div onclick="orderFilter='${f}';renderOrderTable()" class="cursor-pointer bg-white rounded-2xl p-4 border ${orderFilter===f?'border-indigo-300 ring-2 ring-indigo-100':'border-slate-200/60'} shadow-sm hover:shadow-md transition-all">
-          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl ${orderFilter===f?'bg-indigo-100 text-indigo-600':'bg-slate-100 text-slate-500'} flex items-center justify-center"><i data-lucide="${ic}" class="w-5 h-5"></i></div><div><div class="text-2xl font-bold text-slate-800">${c}</div><div class="text-xs text-slate-500">${l}</div></div></div>
+        <div onclick="orderFilter='${f}';renderOrderTable()" class="cursor-pointer bg-white rounded-2xl p-4 border ${orderFilter===f?'border-vermillion-300 ring-2 ring-vermillion-100':'border-slate-200/60'} shadow-sm hover:shadow-md transition-all">
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl ${orderFilter===f?'bg-vermillion-100 text-vermillion-600':'bg-slate-100 text-slate-500'} flex items-center justify-center"><i data-lucide="${ic}" class="w-5 h-5"></i></div><div><div class="text-2xl font-bold text-slate-800">${c}</div><div class="text-xs text-slate-500">${l}</div></div></div>
         </div>`).join('')}
     </div>
     <div class="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden animate-slide-up">
@@ -710,7 +717,7 @@ function renderOrderTable(){
   let data=orderFilter==='all'?[...state.orders]:state.orders.filter(o=>o.status===orderFilter);
   document.getElementById('orderTableBody').innerHTML=data.map(o=>`
     <tr class="hover:bg-slate-50 cursor-pointer transition-colors border-b border-slate-50" onclick="openOrderDetail('${o.id}')">
-      <td class="px-6 py-4 text-sm font-semibold text-indigo-600">${o.id}</td>
+      <td class="px-6 py-4 text-sm font-semibold text-vermillion-600">${o.id}</td>
       <td class="px-6 py-4 text-sm text-slate-700">${o.customer}</td>
       <td class="px-6 py-4 text-sm text-slate-500">${o.items.join(', ')}</td>
       <td class="px-6 py-4 text-sm font-semibold text-slate-800">$${o.total.toLocaleString()}</td>
@@ -728,7 +735,7 @@ function openOrderDetail(id){
   openModal(`
     <div class="flex items-center justify-between mb-6"><div><h3 class="text-xl font-bold text-slate-800">${o.id}</h3><p class="text-sm text-slate-500">${o.customer}</p></div><button onclick="closeModal()" class="p-2 rounded-xl hover:bg-slate-100"><i data-lucide="x" class="w-5 h-5 text-slate-400"></i></button></div>
     ${cancelled?'<div class="p-4 bg-red-50 rounded-xl text-sm text-red-700 mb-4 font-medium">This order has been cancelled.</div>':`
-    <div class="flex items-center gap-2 mb-6">${steps.map((s,i)=>`<div class="flex-1"><div class="h-2 rounded-full ${i<=ci?'bg-indigo-500':'bg-slate-200'} transition-all"></div><div class="text-xs mt-1 ${i<=ci?'text-indigo-600 font-semibold':'text-slate-400'}">${s.charAt(0).toUpperCase()+s.slice(1)}</div></div>`).join('')}</div>`}
+    <div class="flex items-center gap-2 mb-6">${steps.map((s,i)=>`<div class="flex-1"><div class="h-2 rounded-full ${i<=ci?'bg-vermillion-500':'bg-slate-200'} transition-all"></div><div class="text-xs mt-1 ${i<=ci?'text-vermillion-600 font-semibold':'text-slate-400'}">${s.charAt(0).toUpperCase()+s.slice(1)}</div></div>`).join('')}</div>`}
     <div class="space-y-3">
       <div class="p-4 bg-slate-50 rounded-xl"><span class="text-xs text-slate-500">Items</span><div class="mt-1 space-y-1">${o.items.map(i=>`<div class="text-sm text-slate-700">- ${i}</div>`).join('')}</div></div>
       <div class="flex justify-between p-4 bg-slate-50 rounded-xl"><span class="text-sm text-slate-500">Total</span><span class="text-lg font-bold text-slate-800">$${o.total.toLocaleString()}</span></div>
@@ -736,7 +743,7 @@ function openOrderDetail(id){
       ${o.tracking?`<div class="flex justify-between p-4 bg-slate-50 rounded-xl"><span class="text-sm text-slate-500">Tracking</span><span class="text-sm font-mono text-slate-800">${o.tracking}</span></div>`:''}
     </div>
     ${!cancelled&&ci<3?`<div class="flex gap-3 mt-6">
-      <button onclick="advanceOrder('${o.id}')" class="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 active:scale-[0.98] transition-all">Advance to ${steps[ci+1]?steps[ci+1].charAt(0).toUpperCase()+steps[ci+1].slice(1):''}</button>
+      <button onclick="advanceOrder('${o.id}')" class="flex-1 py-2.5 bg-vermillion-600 text-white rounded-xl text-sm font-semibold hover:bg-vermillion-700 active:scale-[0.98] transition-all">Advance to ${steps[ci+1]?steps[ci+1].charAt(0).toUpperCase()+steps[ci+1].slice(1):''}</button>
       <button onclick="cancelOrder('${o.id}')" class="flex-1 py-2.5 bg-red-50 text-red-700 rounded-xl text-sm font-semibold hover:bg-red-100 active:scale-[0.98] transition-all">Cancel Order</button>
     </div>`:'<button onclick="closeModal()" class="w-full mt-6 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-sm font-semibold hover:bg-slate-200 transition-all">Close</button>'}
   `);
@@ -768,7 +775,7 @@ function renderProducts(){
         </div>
         <span class="text-sm text-slate-500">${state.products.length} products</span>
       </div>
-      <button onclick="openAddProduct()" class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 active:scale-95 transition-all"><i data-lucide="plus" class="w-4 h-4"></i> Add Product</button>
+      <button onclick="openAddProduct()" class="flex items-center gap-2 px-4 py-2 bg-vermillion-600 text-white rounded-xl text-sm font-medium hover:bg-vermillion-700 active:scale-95 transition-all"><i data-lucide="plus" class="w-4 h-4"></i> Add Product</button>
     </div>
     <div id="productList"></div>`;
   lucide.createIcons();
@@ -778,8 +785,8 @@ function renderProductList(){
   const el=document.getElementById('productList');
   if(prodView==='grid'){
     el.innerHTML=`<div class="grid grid-cols-4 gap-4">${state.products.map(p=>`
-      <div class="bg-white rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-indigo-200 transition-all cursor-pointer animate-slide-up" onclick="openProductDetail(${p.id})">
-        <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center mb-4"><i data-lucide="${p.icon}" class="w-6 h-6 text-indigo-600"></i></div>
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-vermillion-200 transition-all cursor-pointer animate-slide-up" onclick="openProductDetail(${p.id})">
+        <div class="w-12 h-12 rounded-2xl bg-vermillion-50 flex items-center justify-center mb-4"><i data-lucide="${p.icon}" class="w-6 h-6 text-vermillion-600"></i></div>
         <h3 class="text-sm font-bold text-slate-800 mb-1">${p.name}</h3>
         <p class="text-xs text-slate-500 mb-3 line-clamp-2">${p.desc}</p>
         <div class="flex items-center justify-between">
@@ -798,7 +805,7 @@ function renderProductList(){
         <th class="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Status</th>
       </tr></thead><tbody>${state.products.map(p=>`
         <tr class="hover:bg-slate-50 cursor-pointer transition-colors border-b border-slate-50" onclick="openProductDetail(${p.id})">
-          <td class="px-6 py-4"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center"><i data-lucide="${p.icon}" class="w-4 h-4 text-indigo-600"></i></div><div><div class="text-sm font-semibold text-slate-800">${p.name}</div><div class="text-xs text-slate-400">${p.desc}</div></div></div></td>
+          <td class="px-6 py-4"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-xl bg-vermillion-50 flex items-center justify-center"><i data-lucide="${p.icon}" class="w-4 h-4 text-vermillion-600"></i></div><div><div class="text-sm font-semibold text-slate-800">${p.name}</div><div class="text-xs text-slate-400">${p.desc}</div></div></div></td>
           <td class="px-6 py-4 text-sm text-slate-600">${p.category}</td>
           <td class="px-6 py-4 text-sm font-semibold text-slate-800">${p.price===0?'Free':'$'+p.price}</td>
           <td class="px-6 py-4 text-sm text-slate-700">${p.sales}</td>
@@ -811,18 +818,18 @@ function openProductDetail(id){
   const p=state.products.find(x=>x.id===id);if(!p)return;
   openModal(`
     <div class="flex items-center justify-between mb-6">
-      <div class="flex items-center gap-4"><div class="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center"><i data-lucide="${p.icon}" class="w-7 h-7 text-indigo-600"></i></div><div><h3 class="text-xl font-bold text-slate-800">${p.name}</h3><p class="text-sm text-slate-500">${p.category}</p></div></div>
+      <div class="flex items-center gap-4"><div class="w-14 h-14 rounded-2xl bg-vermillion-50 flex items-center justify-center"><i data-lucide="${p.icon}" class="w-7 h-7 text-vermillion-600"></i></div><div><h3 class="text-xl font-bold text-slate-800">${p.name}</h3><p class="text-sm text-slate-500">${p.category}</p></div></div>
       <button onclick="closeModal()" class="p-2 rounded-xl hover:bg-slate-100"><i data-lucide="x" class="w-5 h-5 text-slate-400"></i></button>
     </div>
     <p class="text-sm text-slate-600 mb-4">${p.desc}</p>
     <form onsubmit="event.preventDefault();saveProduct(${p.id},this)" class="space-y-3">
       <div class="grid grid-cols-2 gap-3">
-        <div><label class="text-xs font-medium text-slate-500">Price ($)</label><input name="price" type="number" value="${p.price}" min="0" class="w-full mt-1 px-3 py-2 border border-slate-200 rounded-xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none"></div>
-        <div><label class="text-xs font-medium text-slate-500">Status</label><select name="status" class="w-full mt-1 px-3 py-2 border border-slate-200 rounded-xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none"><option value="active" ${p.status==='active'?'selected':''}>Active</option><option value="draft" ${p.status==='draft'?'selected':''}>Draft</option></select></div>
+        <div><label class="text-xs font-medium text-slate-500">Price ($)</label><input name="price" type="number" value="${p.price}" min="0" class="w-full mt-1 px-3 py-2 border border-slate-200 rounded-xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none"></div>
+        <div><label class="text-xs font-medium text-slate-500">Status</label><select name="status" class="w-full mt-1 px-3 py-2 border border-slate-200 rounded-xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none"><option value="active" ${p.status==='active'?'selected':''}>Active</option><option value="draft" ${p.status==='draft'?'selected':''}>Draft</option></select></div>
       </div>
-      <div><label class="text-xs font-medium text-slate-500">Description</label><textarea name="desc" class="w-full mt-1 px-3 py-2 border border-slate-200 rounded-xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none h-20">${p.desc}</textarea></div>
+      <div><label class="text-xs font-medium text-slate-500">Description</label><textarea name="desc" class="w-full mt-1 px-3 py-2 border border-slate-200 rounded-xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none h-20">${p.desc}</textarea></div>
       <div class="flex gap-3">
-        <button type="submit" class="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 active:scale-[0.98] transition-all">Save Changes</button>
+        <button type="submit" class="flex-1 py-2.5 bg-vermillion-600 text-white rounded-xl text-sm font-semibold hover:bg-vermillion-700 active:scale-[0.98] transition-all">Save Changes</button>
         <button type="button" onclick="confirmDeleteProduct(${p.id})" class="py-2.5 px-4 bg-red-50 text-red-700 rounded-xl text-sm font-semibold hover:bg-red-100 transition-all">Delete</button>
       </div>
     </form>
@@ -842,13 +849,13 @@ function openAddProduct(){
   openModal(`
     <div class="flex items-center justify-between mb-6"><h3 class="text-xl font-bold text-slate-800">Add Product</h3><button onclick="closeModal()" class="p-2 rounded-xl hover:bg-slate-100"><i data-lucide="x" class="w-5 h-5 text-slate-400"></i></button></div>
     <form onsubmit="event.preventDefault();addProduct(this)" class="space-y-4">
-      <div><label class="text-sm font-medium text-slate-700">Name</label><input name="name" required class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none"></div>
-      <div><label class="text-sm font-medium text-slate-700">Description</label><textarea name="desc" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none h-20"></textarea></div>
+      <div><label class="text-sm font-medium text-slate-700">Name</label><input name="name" required class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none"></div>
+      <div><label class="text-sm font-medium text-slate-700">Description</label><textarea name="desc" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none h-20"></textarea></div>
       <div class="grid grid-cols-2 gap-3">
-        <div><label class="text-sm font-medium text-slate-700">Price ($)</label><input name="price" type="number" value="0" min="0" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none"></div>
-        <div><label class="text-sm font-medium text-slate-700">Category</label><select name="category" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none"><option>Subscription</option><option>License</option><option>Add-on</option><option>Service</option><option>Promotion</option></select></div>
+        <div><label class="text-sm font-medium text-slate-700">Price ($)</label><input name="price" type="number" value="0" min="0" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none"></div>
+        <div><label class="text-sm font-medium text-slate-700">Category</label><select name="category" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none"><option>Subscription</option><option>License</option><option>Add-on</option><option>Service</option><option>Promotion</option></select></div>
       </div>
-      <button type="submit" class="w-full py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 active:scale-[0.98] transition-all">Add Product</button>
+      <button type="submit" class="w-full py-3 bg-vermillion-600 text-white rounded-xl font-semibold hover:bg-vermillion-700 active:scale-[0.98] transition-all">Add Product</button>
     </form>`);
 }
 function addProduct(form){
@@ -870,15 +877,15 @@ function renderSettings(){
         <h2 class="text-lg font-bold text-slate-800 mb-4">Profile</h2>
         <form onsubmit="event.preventDefault();saveProfile(this)" class="space-y-4">
           <div class="flex items-center gap-4 mb-4">
-            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-400 to-indigo-500 flex items-center justify-center text-white text-xl font-bold" id="settingsAvatar">${s.name.split(' ').map(w=>w[0]).join('')}</div>
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-vermillion-400 to-vermillion-600 flex items-center justify-center text-white text-xl font-bold" id="settingsAvatar">${s.name.split(' ').map(w=>w[0]).join('')}</div>
             <div><div class="text-sm font-semibold text-slate-800">${s.name}</div><div class="text-xs text-slate-500">${s.email}</div></div>
           </div>
           <div class="grid grid-cols-2 gap-4">
-            <div><label class="text-sm font-medium text-slate-700">Full Name</label><input name="name" value="${s.name}" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none"></div>
-            <div><label class="text-sm font-medium text-slate-700">Email</label><input name="email" type="email" value="${s.email}" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none"></div>
+            <div><label class="text-sm font-medium text-slate-700">Full Name</label><input name="name" value="${s.name}" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none"></div>
+            <div><label class="text-sm font-medium text-slate-700">Email</label><input name="email" type="email" value="${s.email}" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none"></div>
           </div>
-          <div><label class="text-sm font-medium text-slate-700">Company</label><input name="company" value="${s.company}" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none"></div>
-          <button type="submit" class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 active:scale-[0.98] transition-all">Save Profile</button>
+          <div><label class="text-sm font-medium text-slate-700">Company</label><input name="company" value="${s.company}" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none"></div>
+          <button type="submit" class="px-6 py-2.5 bg-vermillion-600 text-white rounded-xl text-sm font-semibold hover:bg-vermillion-700 active:scale-[0.98] transition-all">Save Profile</button>
           <span id="profileSaved" class="text-sm text-emerald-600 font-medium ml-3 hidden">Saved!</span>
         </form>
       </div>
@@ -889,7 +896,7 @@ function renderSettings(){
           ${Object.entries({email:'Email Notifications',push:'Push Notifications',weekly:'Weekly Digest',marketing:'Marketing Emails'}).map(([k,l])=>`
           <div class="flex items-center justify-between">
             <div><div class="text-sm font-medium text-slate-700">${l}</div><div class="text-xs text-slate-500">${k==='email'?'Receive alerts via email':k==='push'?'Browser push notifications':k==='weekly'?'Weekly summary report':'Product updates and offers'}</div></div>
-            <label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" class="sr-only peer" ${s.notifications[k]?'checked':''} onchange="state.settings.notifications.${k}=this.checked"><div class="w-11 h-6 bg-slate-200 peer-focus:ring-2 peer-focus:ring-indigo-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div></label>
+            <label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" class="sr-only peer" ${s.notifications[k]?'checked':''} onchange="state.settings.notifications.${k}=this.checked"><div class="w-11 h-6 bg-slate-200 peer-focus:ring-2 peer-focus:ring-vermillion-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-vermillion-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div></label>
           </div>`).join('')}
         </div>
       </div>
@@ -927,9 +934,9 @@ function renderHelp(){
   pc.innerHTML=`
     <div class="max-w-2xl mx-auto">
       <div class="text-center mb-8 animate-slide-up">
-        <div class="w-16 h-16 rounded-2xl bg-indigo-100 flex items-center justify-center mx-auto mb-4"><i data-lucide="help-circle" class="w-8 h-8 text-indigo-600"></i></div>
+        <div class="w-16 h-16 rounded-2xl bg-vermillion-100 flex items-center justify-center mx-auto mb-4"><i data-lucide="help-circle" class="w-8 h-8 text-vermillion-600"></i></div>
         <h2 class="text-2xl font-bold text-slate-800 mb-2">How can we help?</h2>
-        <div class="relative max-w-md mx-auto mt-4"><i data-lucide="search" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i><input type="text" placeholder="Search help articles..." value="${helpSearch}" oninput="helpSearch=this.value;renderHelp()" class="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none shadow-sm"></div>
+        <div class="relative max-w-md mx-auto mt-4"><i data-lucide="search" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i><input type="text" placeholder="Search help articles..." value="${helpSearch}" oninput="helpSearch=this.value;renderHelp()" class="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none shadow-sm"></div>
       </div>
       <div class="space-y-3 mb-8">
         ${filtered.map((a,i)=>`
@@ -947,9 +954,9 @@ function renderHelp(){
         <h3 class="text-lg font-bold text-slate-800 mb-1">Still need help?</h3>
         <p class="text-sm text-slate-500 mb-4">Send us a message and we'll get back to you.</p>
         <form onsubmit="event.preventDefault();submitContactForm(this)" class="space-y-4">
-          <div><label class="text-sm font-medium text-slate-700">Subject</label><input name="subject" required class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none"></div>
-          <div><label class="text-sm font-medium text-slate-700">Message</label><textarea name="message" required rows="4" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none"></textarea></div>
-          <button type="submit" class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 active:scale-[0.98] transition-all">Send Message</button>
+          <div><label class="text-sm font-medium text-slate-700">Subject</label><input name="subject" required class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none"></div>
+          <div><label class="text-sm font-medium text-slate-700">Message</label><textarea name="message" required rows="4" class="w-full mt-1 px-4 py-2 border border-slate-200 rounded-xl text-sm focus:border-vermillion-300 focus:ring-2 focus:ring-vermillion-100 outline-none"></textarea></div>
+          <button type="submit" class="px-6 py-2.5 bg-vermillion-600 text-white rounded-xl text-sm font-semibold hover:bg-vermillion-700 active:scale-[0.98] transition-all">Send Message</button>
           <span id="contactSent" class="text-sm text-emerald-600 font-medium ml-3 hidden">Message sent! We'll respond within 24 hours.</span>
         </form>
       </div>
